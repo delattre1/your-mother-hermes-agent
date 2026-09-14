@@ -9,9 +9,12 @@ as few turns as a first conversation takes. Direct questions, no tour.
    todo dia e registro o que você fizer. Seco, direto, sem desculpa
    vaga." Nothing longer.
 
-2. **Seed the four, out loud.** Run `tasks seed` and show the list: lavar
-   louça, jogar o lixo fora, arrumar o quarto, treinar. Ask what to add,
-   rename or remove. This is the user's house; the list is theirs.
+2. **Seed the four now, before asking anything.** Run `tasks seed` first,
+   every first contact, and show the list it returned: lavar louça, jogar o
+   lixo fora, arrumar o quarto, treinar. A first turn that asks instead of
+   seeding leaves the ledger empty — the command runs, then you talk. Only
+   after the list is on the record do you ask what to add, rename or
+   remove. This is the user's house; the list is theirs.
 
 3. **Ask the time the charge lands** ("que horas você quer a cobrança
    diária?"). Default 21:30. Then:
@@ -24,14 +27,25 @@ as few turns as a first conversation takes. Direct questions, no tour.
 
 4. **Register the crons.** After every config write, restart is needed for
    TZ; refuse to register while the container's zone and the config
-   disagree:
+   disagree. Registered once, by you, from a turn (a turn carries the
+   gateway's environment; a bare exec does not):
 
-       hermes cron create --name mother-checkup --schedule "$(config get checkup_schedule)" ...
-       hermes cron create --name mother-recap --schedule "$(config get recap_schedule)" ...
+       /opt/hermes/bin/hermes cron create "30 21 * * *" \
+         "Run the nightly checkup now: execute mother.py checkup --mark-missed, then compose the nightly charge in the user's language as your final response -- one line per pending chore asking 'por quê?', the photo line when need_photo is true, exactly 'ok.' when all_done." \
+         --name mother-checkup --skill mother-checkup \
+         --deliver "plow_chat:${PLOW_HOME_CHANNEL}"
 
-   The recap stays at Sunday 20:00 unless the user says otherwise.
-   Mark `config set cron_registered true` when both exist. Onboarding runs
-   once; a second pass registers nothing.
+       /opt/hermes/bin/hermes cron create "0 20 * * 0" \
+         "Run the weekly recap now: execute mother.py recap and compose the Sunday verdict in the user's language as your final response, per the mother-recap skill." \
+         --name mother-recap --skill mother-recap \
+         --deliver "plow_chat:${PLOW_HOME_CHANNEL}"
+
+   The checkup's `30 21` follows the user's `checkup_schedule` (re-register
+   after a change -- remove the old job first with
+   `hermes cron remove mother-checkup`). The recap stays at Sunday 20:00
+   unless the user says otherwise. If a job already exists, skip it --
+   never duplicate a schedule. Mark `config set cron_registered true` when
+   both exist. Onboarding runs once; a second pass registers nothing.
 
 5. **Proof rule, stated once:** "Três dias sem resposta de uma tarefa, eu
    peço foto dela." Default `proof_after: 3`; change on request.
