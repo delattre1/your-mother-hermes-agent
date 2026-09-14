@@ -33,12 +33,17 @@ as few turns as a first conversation takes. Direct questions, no tour.
        /opt/hermes/bin/hermes cron create "30 21 * * *" \
          "Run the nightly checkup now: execute mother.py checkup --mark-missed, then compose the nightly charge in the user's language as your final response -- one line per pending chore asking 'por quê?', the photo line when need_photo is true, exactly 'ok.' when all_done." \
          --name mother-checkup --skill mother-checkup \
+         --model anthropic/claude-sonnet-5 --provider plow \
          --deliver "plow_chat:${PLOW_HOME_CHANNEL}"
 
        /opt/hermes/bin/hermes cron create "0 20 * * 0" \
          "Run the weekly recap now: execute mother.py recap and compose the Sunday verdict in the user's language as your final response, per the mother-recap skill." \
          --name mother-recap --skill mother-recap \
+         --model anthropic/claude-sonnet-5 --provider plow \
          --deliver "plow_chat:${PLOW_HOME_CHANNEL}"
+
+A cron created without `--model` and `--provider` lands with no LLM provider
+and fails every run with "No LLM provider configured" -- always pass both.
 
    The checkup's `30 21` follows the user's `checkup_schedule` (re-register
    after a change -- remove the old job first with
