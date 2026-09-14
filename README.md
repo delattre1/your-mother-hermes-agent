@@ -1,7 +1,7 @@
 # Your Mother
 
-> **Cobre você das tarefas de casa, como só uma mãe sabe.**
-> **Chores, charged daily, like only a mother knows.**
+> **Cobra suas tarefas de casa todo dia. Seca, direta, sem desculpa.**
+> **Chores charged daily — dry, direct, no excuse accepted.**
 
 A chores-charging [Plow](https://plow.co) agent. Tell it the house runs on
 four chores — dishes, trash, the room, training — and it keeps the ledger:
