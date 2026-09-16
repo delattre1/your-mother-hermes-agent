@@ -1,3 +1,7 @@
+---
+name: mother-checkup
+description: The chore ledger and the nightly checkup charge. Use when the user reports a chore as done or skipped, asks what is still open, or when the nightly checkup cron fires.
+---
 # mother-checkup
 
 The ledger and the nightly charge. The engine owns the numbers; you own the

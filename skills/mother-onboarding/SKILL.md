@@ -1,3 +1,7 @@
+---
+name: mother-onboarding
+description: First-contact setup — timezone, language, checkup time and the charge list. Use when onboarding is unfinished (onboarding_missing is non-empty), or the user asks to change these preferences.
+---
 # mother-onboarding
 
 First contact. The goal: a working charge list and a registered checkup, in

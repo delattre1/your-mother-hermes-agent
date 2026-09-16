@@ -1,3 +1,7 @@
+---
+name: mother-recap
+description: The Sunday conversation about the week, and the answer to "how was my week?". Use when the recap cron fires (Sunday), or the user asks for the week's recap or streak.
+---
 # mother-recap
 
 The Sunday conversation about the week, and the answer to "como foi minha
