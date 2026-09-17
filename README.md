@@ -45,15 +45,44 @@ source is you, honestly recorded.
   agents
 - No third-party dependencies; stdlib only, like the base image
 
-## Run it
+## Install
 
-```
-docker compose up -d
+One Plow line per agent. From your machine:
+
+```sh
+git clone https://github.com/plow-pbc/plow-agents.git
+export PATH="$PWD/plow-agents/bin:$PATH"
+
+git clone https://github.com/emanuellcoelho/your-mother-hermes-agent.git
+cd your-mother-hermes-agent
+
+plow-agents login             # once per account; text the activation phrase
+plow-agents lines             # pick a free line
+plow-agents mint ln_xxx       # writes ./plow-credentials
+docker compose up --build -d
 ```
 
-The container joins Plow with the credential at `plow-credentials` (never
-tracked), registers itself on the [Agent Index](https://aiworthusing.com)
-as `your-mother`, and starts charging.
+`mint` must run **before** `up`: the compose file mounts `./plow-credentials`,
+and Docker silently creates it as a *directory* if the file is not there yet.
+If that happened, `docker compose down -v && rmdir plow-credentials`, then
+mint the line and start over.
+
+Watch `docker compose logs -f agent` until
+`plow-init: configured ... as cht_` appears, then text your line. The
+container joins Plow with that credential (never tracked), registers itself
+on the [Agent Index](https://aiworthusing.com) as `your-mother`, and starts
+charging.
+
+If the build fails pulling the base image from `public.ecr.aws` with a 403,
+the cause is a stale credential: `docker logout public.ecr.aws`, then build
+again.
+
+Retire it when you are done:
+
+```sh
+plow-agents revoke
+docker compose down -v        # `down` alone keeps the ledger
+```
 
 ## Tests
 
